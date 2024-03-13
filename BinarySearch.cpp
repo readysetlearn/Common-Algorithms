@@ -22,7 +22,6 @@ ForwardIt binary_search_position(ForwardIt first, ForwardIt last, const T target
 		// Calculate the mid point between first and last
 		auto mid = first;
 		std::advance(mid, std::distance(first, std::next(last)) / 2);// Calling next on last is to cause rounding up in the case the distance is odd
-		std::cout << "first: " << *first << " mid: " << *mid << " last: " << *last << std::endl;
 		if(*mid > target)
 		{
 			last = std::prev(mid);
