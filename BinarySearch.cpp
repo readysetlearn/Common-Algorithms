@@ -5,8 +5,8 @@
 #include <list>
 
 // Return iterator pointing to the location where target was found. If target was not found, the location of where it would be is returned.
-template <typename ForwardIt, typename T>
-ForwardIt binary_search_position(ForwardIt first, ForwardIt last, const T target)
+template <typename Iter, typename T>
+Iter binary_search_position(Iter first, Iter last, const T target)
 {
 	// Container has 0 or 1 elements
 	if(first == last || std::next(first) == last)
