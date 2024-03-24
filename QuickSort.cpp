@@ -11,12 +11,18 @@ void quickSort(Iter begin, Iter end);
 template <typename Iter>
 Iter Partition(Iter begin, Iter end);
 
+template <typename Iter>
+Iter medianOf3(Iter begin, Iter end);
 
 // Sorts a range of elements using the Quick Sort algorithm.
 template<typename Iter>
 void quickSort(Iter begin, Iter end)
 {
-    if (std::distance(begin, end) < 2) return;
+	// Containers of size less than 2 are sorted
+    if (std::distance(begin, end) < 2)
+	{
+		return;
+	}
 
     Iter pi = Partition(begin, end); // pi is partition index
     quickSort(begin, pi);
@@ -27,9 +33,9 @@ void quickSort(Iter begin, Iter end)
 template <typename Iter>
 Iter Partition(Iter begin, Iter end)
 {
-    auto pivot = *begin; // Choose first element as pivot
     Iter lft = begin; // Initialize left index
     Iter rgt = std::prev(end);     // Initialize right index
+	auto pivot = *medianOf3(lft, rgt);
 
     while(true) 
 	{
@@ -60,6 +66,28 @@ Iter Partition(Iter begin, Iter end)
 		}
     }
 }
+
+// Select median between 3 elements
+template <typename Iter>
+Iter medianOf3(Iter begin, Iter end)
+{
+	// General formula for mid point is [begin + (end - begin) / 2]
+	Iter mid = std::next(begin, std::distance(begin, end) /2);
+	
+	if(*begin <= *mid && *mid <= *end)
+	{
+		return mid;
+	}
+	else if(*mid <= *begin && *begin <= *end)
+	{
+		return begin;
+	}
+	else
+	{
+		return end;
+	}
+}
+
 
 // Test 1: empty vector
 void testEmptyRange()
