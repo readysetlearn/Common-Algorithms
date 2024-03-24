@@ -118,7 +118,23 @@ void testDuplicateElements()
     assert((vec == std::vector<int>{1, 1, 2, 3, 4, 4, 5}));
 }
 
-// Test 8: list with random ints
+// Test 8: vector with all duplicates, odd length
+void allDupsOdd()
+{
+    std::vector<int> vec(5, 10);  // Odd length vector of duplicates
+    quickSort(vec.begin(), vec.end());
+    assert(vec == std::vector<int>(5, 10));
+}
+
+// Test 9: vector with all duplicates, even length
+void allDupsEven()
+{
+    std::vector<int> vec(6, 10);  // Even length vector of duplicates
+    quickSort(vec.begin(), vec.end());
+    assert(vec == std::vector<int>(6, 10));
+}
+
+// Test 10: list with random ints
 void testRandomListSort()
 {
     std::list<int> randomList = {30, 10, 50, 20, 40}; // Random list
@@ -145,8 +161,12 @@ int main()
 	std::cout << "Test 6 passed" << std::endl;
 	testDuplicateElements();
 	std::cout << "Test 7 passed" << std::endl;
-	testRandomListSort();	
+	void allDupsOdd();
 	std::cout << "Test 8 passed" << std::endl;
+	void allDupsEven();
+	std::cout << "Test 9 passed" << std::endl;
+	testRandomListSort();
+	std::cout << "Test 10 passed" << std::endl;
 	std::cout << "Completed" << std::endl;
 	
 	return 0;
