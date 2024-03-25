@@ -67,18 +67,19 @@ Iter Partition(Iter begin, Iter end)
     }
 }
 
-// Select median between 3 elements
+// @return Median value among the first, middle and last element
+// @param end Points to the last element, not one after the last (which std::end() does)
 template <typename Iter>
 Iter medianOf3(Iter begin, Iter end)
 {
 	// General formula for mid point is [begin + (end - begin) / 2]
 	Iter mid = std::next(begin, std::distance(begin, end) /2);
 	
-	if(*begin <= *mid && *mid <= *end)
+	if((*begin <= *mid && *mid <= *end) || (*begin >= *mid && *mid >= *end))
 	{
 		return mid;
 	}
-	else if(*mid <= *begin && *begin <= *end)
+	else if((*mid <= *begin && *begin <= *end) || (*mid >= *begin && *begin >= *end))
 	{
 		return begin;
 	}
@@ -88,8 +89,8 @@ Iter medianOf3(Iter begin, Iter end)
 	}
 }
 
-
-// Test 1: empty vector
+// Quicksort tests
+// Test case 1: empty vector
 void testEmptyRange()
 {
     std::vector<int> vec;  // Empty vector
@@ -97,7 +98,7 @@ void testEmptyRange()
     assert(vec.size() == 0);
 }
 
-// Test 2: vector with only one element.
+// Test case 2: vector with only one element.
 void testSingleElementRange()
 {
     std::vector<int> vec = {42};  // Single-element vector
@@ -106,7 +107,7 @@ void testSingleElementRange()
     assert(vec[0] == 42);
 }
 
-// Test 3: vector where elements are already sorted
+// Test case 3: vector where elements are already sorted
 void testSortedRange()
 {
     std::vector<int> vec = {1, 2, 3, 4, 5};  // Sorted vector
@@ -114,7 +115,7 @@ void testSortedRange()
     assert((vec == std::vector<int>{1, 2, 3, 4, 5}));
 }
 
-// Test 4: vector where elements are sorted in descending order.
+// Test case 4: vector where elements are sorted in descending order.
 void testReverseSortedRange()
 {
     std::vector<int> vec = {5, 4, 3, 2, 1};  // Reverse-sorted vector
@@ -122,7 +123,7 @@ void testReverseSortedRange()
     assert((vec == std::vector<int>{1, 2, 3, 4, 5}));
 }
 
-// Test 5: vector with random ints
+// Test case 5: vector with random ints
 void testRandomdRangeInt()
 {
     std::vector<int> vec = {3, 1, 4, -2, 5};  // Random vector
@@ -130,7 +131,7 @@ void testRandomdRangeInt()
     assert((vec == std::vector<int>{-2, 1, 3, 4, 5}));
 }
 
-// Test 6: vector with random chars
+// Test case 6: vector with random chars
 void testRandomRangeChar()
 {
     std::vector<char> vec = {'c', 'b', 'a', 'z', 'x', 'y'};  // Random vector
@@ -138,7 +139,7 @@ void testRandomRangeChar()
     assert((vec == std::vector<char>{'a', 'b', 'c', 'x', 'y', 'z'}));
 }
 
-// Test 7: vector with random ints and duplicates
+// Test case 7: vector with random ints and duplicates
 void testDuplicateElements()
 {
     std::vector<int> vec = {3, 1, 4, 2, 1, 5, 4};  // Vector with duplicates
@@ -146,7 +147,7 @@ void testDuplicateElements()
     assert((vec == std::vector<int>{1, 1, 2, 3, 4, 4, 5}));
 }
 
-// Test 8: vector with all duplicates, odd length
+// Test case 8: vector with all duplicates, odd length
 void allDupsOdd()
 {
     std::vector<int> vec(5, 10);  // Odd length vector of duplicates
@@ -154,7 +155,7 @@ void allDupsOdd()
     assert(vec == std::vector<int>(5, 10));
 }
 
-// Test 9: vector with all duplicates, even length
+// Test case 9: vector with all duplicates, even length
 void allDupsEven()
 {
     std::vector<int> vec(6, 10);  // Even length vector of duplicates
@@ -162,7 +163,7 @@ void allDupsEven()
     assert(vec == std::vector<int>(6, 10));
 }
 
-// Test 10: list with random ints
+// Test case 10: list with random ints
 void testRandomListSort()
 {
     std::list<int> randomList = {30, 10, 50, 20, 40}; // Random list
@@ -170,31 +171,88 @@ void testRandomListSort()
     assert((randomList == std::list<int>{10, 20, 30, 40, 50}));
 }
 
+// medianOf3 tests
+// Test case 1: Three distinct elements
+void test3Distinct() {
+    std::vector<int> nums = {5, 2, 8};
+    auto result = medianOf3(nums.begin(), std::prev(nums.end()));
+    assert(*result == 5);
+}
 
+// Test case 2: Three equal elements
+void test3Equal() {
+    std::vector<int> nums = {4, 4, 4};
+    auto result = medianOf3(nums.begin(), std::prev(nums.end()));
+    assert(*result == 4);
+}
+
+// Test case 3: Ascending elements
+void test3Ascending() {
+    std::vector<int> nums = {1, 2, 3};
+    auto result = medianOf3(nums.begin(), std::prev(nums.end()));
+    assert(*result == 2);
+}
+
+// Test case 4: Descending elements
+void test3Descending() {
+    std::vector<int> nums = {6, 5, 4};
+    auto result = medianOf3(nums.begin(), std::prev(nums.end()));
+    assert(*result == 5);
+}
+
+// Test case 5: Six chars
+void test6Chars() {
+    std::vector<int> chars = {'x', 'y', 'z', 'a', 'b', 'c'};
+    auto result = medianOf3(chars.begin(), std::prev(chars.end()));
+    assert(*result == 'x');
+}
+
+// Test case 6: Descending negative elements
+void test3DescNeg() {
+    std::vector<int> nums = {-1, -2, -3};
+    auto result = medianOf3(nums.begin(), std::prev(nums.end()));
+    assert(*result == -2);
+}
 
 int main()
 {
 	std::cout << "Started" << std::endl;
+	
+	test3Distinct();
+	std::cout << "Median of 3 test 1 passed" << std::endl;
+	test3Equal();
+	std::cout << "Median of 3 test 2 passed" << std::endl;
+	test3Ascending();
+	std::cout << "Median of 3 test 3 passed" << std::endl;
+	test3Descending();
+	std::cout << "Median of 3 test 4 passed" << std::endl;
+	test6Chars();
+	std::cout << "Median of 3 test 5 passed" << std::endl;
+	test6Chars();
+	std::cout << "Median of 3 test 5 passed" << std::endl;
+	test3DescNeg();
+	std::cout << "Median of 3 test 6 passed" << std::endl;
+	
 	testEmptyRange();
-	std::cout << "Test 1 passed" << std::endl;
+	std::cout << "Quicksort test 1 passed" << std::endl;
 	testSingleElementRange();
-	std::cout << "Test 2 passed" << std::endl;
+	std::cout << "Quicksort test 2 passed" << std::endl;
 	testSortedRange();
-	std::cout << "Test 3 passed" << std::endl;
+	std::cout << "Quicksort test 3 passed" << std::endl;
 	testReverseSortedRange();
-	std::cout << "Test 4 passed"	<< std::endl;
+	std::cout << "Quicksort test 4 passed"	<< std::endl;
 	testRandomdRangeInt();
-	std::cout << "Test 5 passed" << std::endl;
+	std::cout << "Quicksort test 5 passed" << std::endl;
 	testRandomRangeChar();
-	std::cout << "Test 6 passed" << std::endl;
+	std::cout << "Quicksort test 6 passed" << std::endl;
 	testDuplicateElements();
-	std::cout << "Test 7 passed" << std::endl;
+	std::cout << "Quicksort test 7 passed" << std::endl;
 	void allDupsOdd();
-	std::cout << "Test 8 passed" << std::endl;
+	std::cout << "Quicksort test 8 passed" << std::endl;
 	void allDupsEven();
-	std::cout << "Test 9 passed" << std::endl;
+	std::cout << "Quicksort test 9 passed" << std::endl;
 	testRandomListSort();
-	std::cout << "Test 10 passed" << std::endl;
+	std::cout << "Quicksort test 10 passed" << std::endl;
 	std::cout << "Completed" << std::endl;
 	
 	return 0;
