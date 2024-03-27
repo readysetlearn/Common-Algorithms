@@ -14,14 +14,21 @@ Iter Partition(Iter begin, Iter end);
 template <typename Iter>
 Iter medianOf3(Iter begin, Iter end);
 
+template <typename Iter>
+void sort2(Iter begin, Iter end);
+
+template <typename Iter>
+void sort3(Iter begin, Iter end);
+
 // Sorts a range of elements using the Quick Sort algorithm.
 template<typename Iter>
 void quickSort(Iter begin, Iter end)
 {
-	// Containers of size less than 2 are sorted
-    if (std::distance(begin, end) < 2)
+    if (std::distance(begin, end) < 4)
 	{
-		return;
+		if (std::distance(begin, end) == 3){ sort3(begin, end);} // More efficient to manually sort 2 or 3 elements than recurse
+		else if (std::distance(begin, end) == 2){ sort2(begin, end);}
+		return; // Partitions of size less than 2 are sorted
 	}
 
     Iter pi = Partition(begin, end); // pi is partition index
@@ -34,7 +41,7 @@ template <typename Iter>
 Iter Partition(Iter begin, Iter end)
 {
     Iter lft = begin; // Initialize left index
-    Iter rgt = std::prev(end);     // Initialize right index
+    Iter rgt = std::prev(end); // Initialize right index
 	auto pivot = *medianOf3(lft, rgt);
 
     while(true) 
@@ -87,6 +94,40 @@ Iter medianOf3(Iter begin, Iter end)
 	{
 		return end;
 	}
+}
+
+// Manually sort 2 elements into ascending order
+template <typename Iter>
+void sort2(Iter begin, Iter end)
+{
+	std::advance(end, -1);
+	if(*end < *begin)
+	{
+		std::iter_swap(begin, end);
+	}
+	assert(*begin <= *end);
+}
+
+// Manually sort 3 elements into ascending order
+template <typename Iter>
+void sort3(Iter begin, Iter end)
+{
+	std::advance(end, -1);
+	auto mid = std::next(begin);
+	assert(std::next(mid) == end);
+	if(*begin > *end)
+	{
+		std::iter_swap(begin, end);
+	}
+	if(*begin > *mid)
+	{
+		std::iter_swap(begin, mid);
+	}
+	if(*mid > *end)
+	{
+		std::iter_swap(mid, end);
+	}
+	assert(*begin <= *mid && *mid <= *end);
 }
 
 // Quicksort tests
