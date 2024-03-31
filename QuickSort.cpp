@@ -3,6 +3,7 @@
 #include <vector>
 #include <list>
 #include <cassert>
+#include <algorithm> // for std::is_sorted
 
 // Function prototypes
 template<typename Iter>
@@ -32,8 +33,16 @@ void quickSort(Iter begin, Iter end)
 	}
 
     Iter pi = Partition(begin, end); // pi is partition index
-    quickSort(begin, pi);
-    quickSort(std::next(pi), end);
+	if(std::distance(begin, pi) < std::distance(std::next(pi), end)) // recurse on smaller partition first for efficiency
+	{
+		quickSort(begin, pi);
+		quickSort(std::next(pi), end);
+	}
+	else
+	{
+		quickSort(std::next(pi), end);
+		quickSort(begin, pi);
+	}
 }
 
 // Partition function for Quicksort
@@ -212,6 +221,47 @@ void testRandomListSort()
     assert((randomList == std::list<int>{10, 20, 30, 40, 50}));
 }
 
+// Test case 11: large vector with random longs
+void testLongRand()
+{
+    std::vector<long> vec;
+    for(long i = -100; i <= 500000; i++)
+    {
+      if(i % 5 == 0) vec.push_back(i -20);
+      else if(i % 3 == 0) vec.push_back(i + 20);
+      else if(i % 7 == 0) vec.push_back(i + 1);
+      else vec.push_back(i);
+    }
+    
+    quickSort(vec.begin(), vec.end());
+    
+    for(size_t i = 1; i < vec.size(); i++)
+    {
+      if(vec.at(i) < vec.at(i-1))
+      {
+        std::cout << "sort failed at values " << vec.at(i-1) << " and " << vec.at(i) << std::endl;
+        break;
+      }
+    }
+}
+
+// Test case 12: large vector of duplicates
+void testLongDups()
+{
+    std::vector<long> vec;
+    for(long i = 1; i <= 20000; i++)
+    {
+      vec.push_back(321);
+    }
+    
+    const auto vec2 = vec;
+    
+    quickSort(vec.begin(), vec.end());
+    
+    assert(vec == vec2);
+}
+
+
 // medianOf3 tests
 // Test case 1: Three distinct elements
 void test3Distinct() {
@@ -294,6 +344,10 @@ int main()
 	std::cout << "Quicksort test 9 passed" << std::endl;
 	testRandomListSort();
 	std::cout << "Quicksort test 10 passed" << std::endl;
+	testLongRand();
+	std::cout << "Quicksort test 11 passed" << std::endl;
+	testLongDups();
+	std::cout << "Quicksort test 12 passed" << std::endl;
 	std::cout << "Completed" << std::endl;
 	
 	return 0;
