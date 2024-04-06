@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include <algorithm> // For std::rotate
 
 template<typename Iter>
 void insertionSort(Iter begin, Iter end)
@@ -9,11 +10,7 @@ void insertionSort(Iter begin, Iter end)
 	if(begin == end) return;// Empty containers are considered sorted
 	for(auto i = std::next(begin); i != end; std::advance(i, 1))
 	{
-		auto key = *i;// Key is the current element under consideration
-		for(auto reverse = std::prev(i); std::distance(begin, reverse) >= 0 && *reverse >= key; std::advance(reverse, -1) )
-		{
-			std::iter_swap(reverse, std::next(reverse));
-		}
+		std::rotate(std::upper_bound(begin, i, *i), i, std::next(i));
 	}
 }
 
@@ -43,6 +40,7 @@ void testReverseSorted()
 {
     std::vector<int> reverseVec = {6, 5, 4, 3, 2, 1};
     insertionSort(reverseVec.begin(), reverseVec.end());
+	for(auto i : reverseVec) std::cout << i << ", ";
     assert((reverseVec == std::vector<int>{1, 2, 3, 4, 5, 6}));
 }
 
