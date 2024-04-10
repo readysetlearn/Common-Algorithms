@@ -44,10 +44,25 @@ void qs(Iter begin, Iter end)
 	{
 		if (std::distance(begin, end) < 11)
 		{
-			if (std::distance(begin, end) == 2){ sort3(begin, end);} // More efficient to manually sort 2 or 3 elements than recurse
-			else if (std::distance(begin, end) == 1){ sort2(begin, end);}
-			else if (std::distance(begin, end) < 2) { return; } // Partitions of size less than 2 are sorted
-			else { insertionSort(begin, end); }
+			if (std::distance(begin, end) == 2) // More efficient to manually sort 2 or 3 elements than recurse
+			{
+				sort3(begin, end);
+				return;
+			}
+			else if (std::distance(begin, end) == 1)
+			{
+				sort2(begin, end);
+				return;
+			}
+			else if (std::distance(begin, end) < 2) // Partitions of size less than 2 are sorted
+			{ 
+				return;
+			}
+			else
+			{
+				insertionSort(begin, end);
+				return;
+			}
 		}
 		Iter pi = Partition(begin, end); // pi is partition index
 		if(std::distance(begin, pi) > std::distance(pi, end)) // recurse smaller partition first
@@ -101,26 +116,27 @@ Iter Partition(Iter begin, Iter end)
 	}
 }
 
-// @return Median value among the first, middle and last element
+// @return Median value among the first, middle and last elements and sorts them into ascending order
 // @param end Points to the last element, not one after the last (which std::end() does)
 template <typename Iter>
 Iter medianOf3(Iter begin, Iter end)
 {
 	// General formula for mid point is [begin + (end - begin) / 2]
-	Iter mid = std::next(begin, std::distance(begin, end) /2);
-	
-	if((*begin <= *mid && *mid <= *end) || (*begin >= *mid && *mid >= *end))
+	Iter mid = std::next(begin, std::distance(begin, end) / 2);
+	if(*begin > *end)
 	{
-		return mid;
+		std::iter_swap(begin, end);
 	}
-	else if((*mid <= *begin && *begin <= *end) || (*mid >= *begin && *begin >= *end))
+	if(*begin > *mid)
 	{
-		return begin;
+		std::iter_swap(begin, mid);
 	}
-	else
+	if(*mid > *end)
 	{
-		return end;
+		std::iter_swap(mid, end);
 	}
+	assert(*begin <= *mid && *mid <= *end);
+	return mid;
 }
 
 // Insertion sort is effective on small ranges
@@ -128,7 +144,7 @@ template<typename Iter>
 void insertionSort(Iter begin, Iter end)
 {
 	assert(std::distance(begin, end) > 2 && std::distance(begin, end) < 11);
-	for(auto i = std::next(begin); i != end; std::advance(i, 1))
+	for(auto i = std::next(begin); i != std::next(end); std::advance(i, 1))
 	{
 		std::rotate(std::upper_bound(begin, i, *i), i, std::next(i));
 	}
@@ -150,7 +166,6 @@ void sort2(Iter begin, Iter end)
 template <typename Iter>
 void sort3(Iter begin, Iter end)
 {
-	//std::advance(end, -1);
 	auto mid = std::next(begin);
 	assert(std::next(mid) == end);
 	if(*begin > *end)
