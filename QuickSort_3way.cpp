@@ -19,6 +19,16 @@ template<typename T>
 T medianOf3(std::vector<T> &vec, const typename std::vector<T>::size_type low, const typename std::vector<T>::size_type high);
 
 template<typename T>
+void insertionSort(std::vector<T> &vec, const typename std::vector<T>::size_type low, const typename std::vector<T>::size_type high);
+
+template <typename T>
+void sort2(std::vector<T> &vec, const typename std::vector<T>::size_type low);
+
+template <typename T>
+void sort3(std::vector<T> &vec, const typename std::vector<T>::size_type low);
+
+
+template<typename T>
 void quickSort(std::vector<T> &vec)
 {
 	if(vec.size() > 0)
@@ -32,12 +42,27 @@ void qs(std::vector<T> &vec, const typename std::vector<T>::size_type low, const
 {
 	if(low >= 0 && low < high)
 	{
-		std::pair<typename std::vector<T>::size_type, typename std::vector<T>::size_type> partitionWalls = partition(vec, low, high);
-		if(partitionWalls.first > 0)
+		if(high - low == 1)
 		{
-			qs(vec, low, partitionWalls.first - 1);
+			sort2(vec, low);
 		}
-		qs(vec, partitionWalls.second + 1, high);
+		else if(high - low == 2)
+		{
+			sort3(vec, low);
+		}
+		else if(high - low < 10)
+		{
+			insertionSort(vec, low, high);
+		}
+		else
+		{
+			std::pair<typename std::vector<T>::size_type, typename std::vector<T>::size_type> partitionWalls = partition(vec, low, high);
+			if(partitionWalls.first > 0)
+			{
+				qs(vec, low, partitionWalls.first - 1);
+			}
+			qs(vec, partitionWalls.second + 1, high);
+		}
 	}
 }
 
@@ -73,29 +98,71 @@ std::pair<typename std::vector<T>::size_type, typename std::vector<T>::size_type
 	return std::pair<typename std::vector<T>::size_type, typename std::vector<T>::size_type>(lt, gt);
 }
 
-// Return middle value between elements at low, high and the middle element between them
+// Sorts first, middle and last element into ascending order and return medium value
 template<typename T>
 T medianOf3(std::vector<T> &vec, const typename std::vector<T>::size_type low, const typename std::vector<T>::size_type high)
 {
+	if(high - low < 2)
+	{
+		return vec.at(low);
+	}
+	
+	
 	// Index of the middle element of the vector
-	const typename std::vector<T>::size_type middleIndx = low + (high - low) / 2;
+	const typename std::vector<T>::size_type mid = low + (high - low) / 2;
 	
-	// Index of the median value among the first, last, and middle elements of the vector
-	typename std::vector<T>::size_type mediumIndx;
-    if ((vec.at(low) >= vec.at(middleIndx) && vec.at(low) <= vec.at(high)) || (vec.at(low) <= vec.at(middleIndx) && vec.at(low) >= vec.at(high)))
+	if(vec.at(low) > vec.at(high))
 	{
-		mediumIndx = low;
+		std::swap(vec.at(low), vec.at(high));
 	}
-    else if ((vec.at(middleIndx) >= vec.at(low) && vec.at(middleIndx) <= vec.at(high)) || (vec.at(middleIndx) <= vec.at(low) && vec.at(middleIndx) >= vec.at(high)))
+	if(vec.at(low) > vec.at(mid))
 	{
-		mediumIndx = middleIndx;
+		std::swap(vec.at(low), vec.at(mid));
 	}
-    else
+	if(vec.at(mid) > vec.at(high))
 	{
-		mediumIndx = high;
+		std::swap(vec.at(mid), vec.at(high));
 	}
+	assert(vec.at(low) <= vec.at(mid) && vec.at(mid) <= vec.at(high));
 	
-	return vec.at(mediumIndx);
+	return vec.at(mid);
+}
+
+template<typename T>
+void insertionSort(std::vector<T> &vec, const typename std::vector<T>::size_type low, const typename std::vector<T>::size_type high)
+{
+	assert(high - low > 2 && high - low < 11);
+	for(auto it = vec.begin() + low + 1; it != vec.begin() + high + 1; std::advance(it, 1))
+	{
+		std::rotate(std::upper_bound(vec.begin() + low, it, *it), it, std::next(it));
+	}
+}
+
+template<typename T>
+void sort2(std::vector<T> &vec, const typename std::vector<T>::size_type low)
+{
+	if(vec.at(low) > vec.at(low + 1))
+	{
+		std::swap(vec.at(low), vec.at(low + 1));
+	}
+}
+
+template<typename T>
+void sort3(std::vector<T> &vec, const typename std::vector<T>::size_type low)
+{
+	if(vec.at(low) > vec.at(low + 2))
+	{
+		std::swap(vec.at(low), vec.at(low + 2));
+	}
+	if(vec.at(low) > vec.at(low + 1))
+	{
+		std::swap(vec.at(low), vec.at(low + 1));
+	}
+	if(vec.at(low + 1) > vec.at(low + 2))
+	{
+		std::swap(vec.at(low + 1), vec.at(low + 2));
+	}
+	assert(vec.at(low) <= vec.at(low + 1) && vec.at(low + 1) <= vec.at(low + 2));
 }
 
 // Functional test cases
@@ -286,50 +353,100 @@ void testAlternating10()
 
 // medianOf3 tests
 // Test case 1: Three distinct elements
-void test3Distinct() {
+void test3Distinct()
+{
 	std::vector<int> nums = {5, 2, 8};
 	const auto result = medianOf3(nums, 0, nums.size() - 1);
 	assert(result == 5);
 }
 
 // Test case 2: Three equal elements
-void test3Equal() {
+void test3Equal()
+{
 	std::vector<int> nums = {4, 4, 4};
 	const auto result = medianOf3(nums, 0, nums.size() - 1);
 	assert(result == 4);
 }
 
 // Test case 3: Ascending elements
-void test3Ascending() {
+void test3Ascending()
+{
 	std::vector<int> nums = {1, 2, 3};
 	const auto result = medianOf3(nums, 0, nums.size() - 1);
 	assert(result == 2);
 }
 
 // Test case 4: Descending elements
-void test3Descending() {
+void test3Descending()
+{
 	std::vector<int> nums = {6, 5, 4};
 	const auto result = medianOf3(nums, 0, nums.size() - 1);
 	assert(result == 5);
 }
 
 // Test case 5: Six chars
-void test6Chars() {
+void test6Chars()
+{
 	std::vector<int> chars = {'x', 'y', 'z', 'a', 'b', 'c'};
 	const auto result = medianOf3(chars, 0, chars.size() - 1);
 	assert(result == 'x');
 }
 
 // Test case 6: Descending negative elements
-void test3DescNeg() {
+void test3DescNeg()
+{
 	std::vector<int> nums = {-1, -2, -3};
 	const auto result = medianOf3(nums, 0, nums.size() - 1);
 	assert(result == -2);
 }
 
+// Test cases for insertion sort
+// Test case 1: Test with an already sorted vector
+void testSortedVector()
+{
+    std::vector<int> testVec = {1, 2, 3, 4, 5};
+    insertionSort(testVec, 0, testVec.size() - 1);
+    assert((testVec == std::vector<int>{1, 2, 3, 4, 5}));
+}
+
+// Test case 2: Test with a reverse sorted vector
+void testReverseSortedVector()
+{
+    std::vector<int> testVec = {5, 4, 3, 2, 1};
+    insertionSort(testVec, 0, testVec.size() - 1);
+    assert((testVec == std::vector<int>{1, 2, 3, 4, 5}));
+}
+
+// Test case 3: Test with a random vector
+void testRandomVector()
+{
+    std::vector<int> testVec = {3, 1, 4, 1, 5, 8, 2, 6, 5, 3, 5};
+    insertionSort(testVec, 0, testVec.size() - 1);
+    assert((testVec == std::vector<int>{1, 1, 2, 3, 3, 4, 5, 5, 5, 6, 8}));
+}
+
+// Test case 4: Test with doubles
+void testDoubles()
+{
+    std::vector<double> doubles = {3.55, 1.0, 2.71, 0.4, 2.0};
+    insertionSort(doubles, 0, doubles.size() - 1);
+	for(auto i : doubles)
+		std::cout << i << " ";
+	std::cout << std::endl;
+    assert((doubles == std::vector<double>{0.4, 1.0, 2.0, 2.71, 3.55}));
+}
+
 int main()
 {
 	std::cout << "Started" << std::endl;
+	testSortedVector();
+    std::cout << "Insertion sort test case 1 passed" << std::endl;
+	testReverseSortedVector();
+	std::cout << "Insertion sort test case 2 passed" << std::endl;
+	testRandomVector();
+	std::cout << "Insertion sort test case 3 passed" << std::endl;
+	testDoubles();
+	std::cout << "Insertion sort test case 4 passed" << std::endl;
 	test3Distinct();
 	std::cout << "Pivot test 1 passed" << std::endl;
 	test3Equal();
