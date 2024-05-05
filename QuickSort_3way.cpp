@@ -131,7 +131,7 @@ T medianOf3(std::vector<T> &vec, const typename std::vector<T>::size_type low, c
 template<typename T>
 void insertionSort(std::vector<T> &vec, const typename std::vector<T>::size_type low, const typename std::vector<T>::size_type high)
 {
-	assert(high - low > 2 && high - low < 11);
+	assert(high - low > 2 && high - low < 10);
 	for(auto it = vec.begin() + low + 1; it != vec.begin() + high + 1; std::advance(it, 1))
 	{
 		std::rotate(std::upper_bound(vec.begin() + low, it, *it), it, std::next(it));
@@ -420,9 +420,9 @@ void testReverseSortedVector()
 // Test case 3: Test with a random vector
 void testRandomVector()
 {
-    std::vector<int> testVec = {3, 1, 4, 1, 5, 8, 2, 6, 5, 3, 5};
+    std::vector<int> testVec = {3, 1, 4, 1, 5, 8, 6, 5, 3, 5};
     insertionSort(testVec, 0, testVec.size() - 1);
-    assert((testVec == std::vector<int>{1, 1, 2, 3, 3, 4, 5, 5, 5, 6, 8}));
+    assert((testVec == std::vector<int>{1, 1, 3, 3, 4, 5, 5, 5, 6, 8}));
 }
 
 // Test case 4: Test with doubles
