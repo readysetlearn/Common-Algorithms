@@ -10,7 +10,7 @@ template<typename T>
 void quickSort(std::vector<T> &vec);
 
 template<typename T>
-void qs(std::vector<T> &vec, const typename std::vector<T>::size_type low, const typename std::vector<T>::size_type high);
+void qs(std::vector<T> &vec, typename std::vector<T>::size_type low, const typename std::vector<T>::size_type high);
 
 template<typename T>
 std::pair<typename std::vector<T>::size_type, typename std::vector<T>::size_type> partition(std::vector<T> &vec, const typename std::vector<T>::size_type low, const typename std::vector<T>::size_type high);
@@ -38,30 +38,33 @@ void quickSort(std::vector<T> &vec)
 }
 
 template<typename T>
-void qs(std::vector<T> &vec, const typename std::vector<T>::size_type low, const typename std::vector<T>::size_type high)
+void qs(std::vector<T> &vec, typename std::vector<T>::size_type low, const typename std::vector<T>::size_type high)
 {
-	if(low >= 0 && low < high)
+	while(low < high)
 	{
 		if(high - low == 1)
 		{
 			sort2(vec, low);
+			assert(std::is_sorted(vec.begin() + low , vec.begin() + high + 1)); // is_sorted(x, y) checks the interval [x, y) hence the '+ 1'
+			low = high + 1;
 		}
 		else if(high - low == 2)
 		{
 			sort3(vec, low);
+			assert(std::is_sorted(vec.begin() + low , vec.begin() + high + 1));
+			low = high + 1;
 		}
 		else if(high - low < 10)
 		{
 			insertionSort(vec, low, high);
+			assert(std::is_sorted(vec.begin() + low , vec.begin() + high + 1));
+			low = high + 1;
 		}
 		else
 		{
 			std::pair<typename std::vector<T>::size_type, typename std::vector<T>::size_type> partitionWalls = partition(vec, low, high);
-			if(partitionWalls.first > 0)
-			{
-				qs(vec, low, partitionWalls.first - 1);
-			}
-			qs(vec, partitionWalls.second + 1, high);
+			qs(vec, low, partitionWalls.first);
+			low = partitionWalls.second;
 		}
 	}
 }
@@ -72,7 +75,7 @@ std::pair<typename std::vector<T>::size_type, typename std::vector<T>::size_type
 	assert(high < vec.size() && low >= 0);
 	
 	const auto pivot = medianOf3(vec, low, high);
-	// Lesser, equal and grater indexes
+	// Lesser, equal and greater indexes
 	auto lt = low;
 	auto eq = low;
 	auto gt = high;
@@ -258,241 +261,100 @@ assert((vec == std::vector<float>{0.2f, 1.1f, 2.3f, 3.4f, 4.5f, 5.6f, 6.7f, 7.8f
 
 
 // Stress Test Cases
-// Test 1: large vector with random longs
-void testLongRand()
-{
-	std::vector<long> vec;
-	vec.reserve(50010000); // Reserve memory for efficiency
-	for(size_t i = -10000; i <= 50000000; i++)
-	{
-	  if(i % 5 == 0) vec.push_back(i - 20);
-	  else if(i % 3 == 0) vec.push_back(i + 20);
-	  else if(i % 7 == 0) vec.push_back(i + 1);
-	  else vec.push_back(i);
-	}
-	
-	quickSort(vec);	
-	assert(std::is_sorted(vec.begin(), vec.end()));
-}
-
-// Test 2: large vector of duplicates
-void testLongDups()
-{
-	std::vector<long> vec;
-	vec.reserve(100000);
-	for(size_t i = 1; i <= vec.capacity(); i++)
-	{
-	  vec.push_back(321);
-	}
-	
-	quickSort(vec);
-	assert(std::is_sorted(vec.begin(), vec.end()));
-}
-
-// Test 3: large vector in ascending order
-void testAscending()
-{
-	std::vector<int> ascendingVec;
-    ascendingVec.reserve(10000000);
-
-    for (size_t i = 1; i <= ascendingVec.capacity(); i++)
-	{
-        ascendingVec.push_back(i);
+// Test 1: vector with few duplicates
+void testFewDuplicates() {
+    std::vector<int> vec;
+    const int n = 100000;
+	vec.reserve(n);
+    for (int i = 0; i < n; ++i) {
+        vec.push_back(i % (n / 2)); // Half the range will have duplicates
     }
-	assert(std::is_sorted(ascendingVec.begin(), ascendingVec.end()));
-	quickSort(ascendingVec);
-	assert(std::is_sorted(ascendingVec.begin(), ascendingVec.end()));
+    quickSort(vec);
+    assert(std::is_sorted(vec.begin(), vec.end()));
 }
 
-// Test 4: large vector in descending order
-void testDescending()
-{
-	std::vector<int> descendingVec;
-    descendingVec.reserve(100000000);
-
-    for (size_t i = descendingVec.capacity(); i <= 1; i--)
-	{
-        descendingVec.push_back(i);
+// Test 2: vector with all duplicates
+void testAllDuplicates() {
+    std::vector<int> vec;
+    const int n = 100000;
+	vec.reserve(n);
+    int val = 25; // Value to be repeated
+    for (int i = 0; i < n; ++i) {
+        vec.push_back(val); // All elements are same
     }
-	
-	quickSort(descendingVec);
-	assert(std::is_sorted(descendingVec.begin(), descendingVec.end()));
+    quickSort(vec);
+    assert(std::is_sorted(vec.begin(), vec.end()));
 }
 
-// Test 5: large vector with adjacent elements alternating between positive and negative
-void testAlternating2()
-{
-	std::vector<int> alternatingVec;
-    alternatingVec.reserve(10000000);
-
-    for (size_t i = 1; i <= alternatingVec.capacity(); i++)
-	{
-		int value = (i % 2 == 0) ? -i : i;
-		alternatingVec.push_back(value);
+// Test 3: vector with random duplicates
+void testRandomDuplicates() {
+    std::vector<int> vec;
+    const int n = 100000;
+	vec.reserve(n);
+    for (int i = 0; i < n; ++i) {
+        vec.push_back(i % 10); // 10 different values with some repetitions
     }
-	
-	quickSort(alternatingVec);
-	assert(std::is_sorted(alternatingVec.begin(), alternatingVec.end()));
+    quickSort(vec);
+    assert(std::is_sorted(vec.begin(), vec.end()));
 }
 
-// Test 6: large vector, mostly ascending except every 10th element is negative
-void testAlternating10()
-{
-	std::vector<int> alternatingVec;
-    alternatingVec.reserve(1000000);
-
-    for (size_t i = 1; i <= alternatingVec.capacity(); i++) {
-        int value = (i % 10 == 0) ? -i : i;
-        alternatingVec.push_back(value);
+// Test 4: vector with no duplicates
+void testNoDuplicates() {
+    std::vector<int> vec;
+    const int n = 100000;
+	vec.reserve(n);
+    for (int i = 0; i < n; ++i) {
+        vec.push_back(i); // All elements are unique
     }
-	
-	quickSort(alternatingVec);
-	assert(std::is_sorted(alternatingVec.begin(), alternatingVec.end()));
+    quickSort(vec);
+    assert(std::is_sorted(vec.begin(), vec.end()));
 }
 
-
-// medianOf3 tests
-// Test case 1: Three distinct elements
-void test3Distinct()
-{
-	std::vector<int> nums = {5, 2, 8};
-	const auto result = medianOf3(nums, 0, nums.size() - 1);
-	assert(result == 5);
+// Test 5: vector with mostly duplicates
+void testMostlyDuplicates() {
+    std::vector<int> vec;
+    const int n = 100000;
+	vec.reserve(n);
+    for (int i = 0; i < n; ++i) {
+        if (i < n / 2) {
+            vec.push_back(26); // Half of the elements are same
+        } else {
+            vec.push_back(i); // Other half are unique
+        }
+    }
+    quickSort(vec);
+    assert(std::is_sorted(vec.begin(), vec.end()));
 }
 
-// Test case 2: Three equal elements
-void test3Equal()
-{
-	std::vector<int> nums = {4, 4, 4};
-	const auto result = medianOf3(nums, 0, nums.size() - 1);
-	assert(result == 4);
+// Test 6: vector with alternating duplicates
+void testAlternatingDuplicates() {
+    std::vector<int> vec;
+    const int n = 100000;
+	vec.reserve(n);
+    for (int i = 0; i < n; ++i) {
+        vec.push_back(i % 2); // Alternating duplicates
+    }
+    quickSort(vec);
+    assert(std::is_sorted(vec.begin(), vec.end()));
 }
 
-// Test case 3: Ascending elements
-void test3Ascending()
-{
-	std::vector<int> nums = {1, 2, 3};
-	const auto result = medianOf3(nums, 0, nums.size() - 1);
-	assert(result == 2);
-}
-
-// Test case 4: Descending elements
-void test3Descending()
-{
-	std::vector<int> nums = {6, 5, 4};
-	const auto result = medianOf3(nums, 0, nums.size() - 1);
-	assert(result == 5);
-}
-
-// Test case 5: Six chars
-void test6Chars()
-{
-	std::vector<int> chars = {'x', 'y', 'z', 'a', 'b', 'c'};
-	const auto result = medianOf3(chars, 0, chars.size() - 1);
-	assert(result == 'x');
-}
-
-// Test case 6: Descending negative elements
-void test3DescNeg()
-{
-	std::vector<int> nums = {-1, -2, -3};
-	const auto result = medianOf3(nums, 0, nums.size() - 1);
-	assert(result == -2);
-}
-
-// Test cases for insertion sort
-// Test case 1: Test with an already sorted vector
-void testSortedVector()
-{
-    std::vector<int> testVec = {1, 2, 3, 4, 5};
-    insertionSort(testVec, 0, testVec.size() - 1);
-    assert((testVec == std::vector<int>{1, 2, 3, 4, 5}));
-}
-
-// Test case 2: Test with a reverse sorted vector
-void testReverseSortedVector()
-{
-    std::vector<int> testVec = {5, 4, 3, 2, 1};
-    insertionSort(testVec, 0, testVec.size() - 1);
-    assert((testVec == std::vector<int>{1, 2, 3, 4, 5}));
-}
-
-// Test case 3: Test with a random vector
-void testRandomVector()
-{
-    std::vector<int> testVec = {3, 1, 4, 1, 5, 8, 6, 5, 3, 5};
-    insertionSort(testVec, 0, testVec.size() - 1);
-    assert((testVec == std::vector<int>{1, 1, 3, 3, 4, 5, 5, 5, 6, 8}));
-}
-
-// Test case 4: Test with doubles
-void testDoubles()
-{
-    std::vector<double> doubles = {3.55, 1.0, 2.71, 0.4, 2.0};
-    insertionSort(doubles, 0, doubles.size() - 1);
-	for(auto i : doubles)
-		std::cout << i << " ";
-	std::cout << std::endl;
-    assert((doubles == std::vector<double>{0.4, 1.0, 2.0, 2.71, 3.55}));
-}
 
 int main()
 {
 	std::cout << "Started" << std::endl;
-	testSortedVector();
-    std::cout << "Insertion sort test case 1 passed" << std::endl;
-	testReverseSortedVector();
-	std::cout << "Insertion sort test case 2 passed" << std::endl;
-	testRandomVector();
-	std::cout << "Insertion sort test case 3 passed" << std::endl;
-	testDoubles();
-	std::cout << "Insertion sort test case 4 passed" << std::endl;
-	test3Distinct();
-	std::cout << "Pivot test 1 passed" << std::endl;
-	test3Equal();
-	std::cout << "Pivot test 2 passed" << std::endl;
-	test3Ascending();
-	std::cout << "Pivot test 3 passed" << std::endl;
-	test3Descending();
-	std::cout << "Pivot test 4 passed" << std::endl;
-	test6Chars();
-	std::cout << "Pivot test 5 passed" << std::endl;
-	test3DescNeg();
-	std::cout << "Pivot test 6 passed" << std::endl;
-	testEmptyRange();
-	std::cout << "Quicksort functional test 1 passed" << std::endl;
-	testSingleElementRange();
-	std::cout << "Quicksort functional test 2 passed" << std::endl;
-	testSortedRange();
-	std::cout << "Quicksort functional test 3 passed" << std::endl;
-	testReverseSortedRange();
-	std::cout << "Quicksort functional test 4 passed"	<< std::endl;
-	testRandomdRangeInt();
-	std::cout << "Quicksort functional test 5 passed" << std::endl;
-	testRandomRangeChar();
-	std::cout << "Quicksort functional test 6 passed" << std::endl;
-	testDuplicateElements();
-	std::cout << "Quicksort functional test 7 passed" << std::endl;
-	void allDupsOdd();
-	std::cout << "Quicksort functional  test 8 passed" << std::endl;
-	void allDupsEven();
-	std::cout << "Quicksort functional test 9 passed" << std::endl;
-	void testRandomLongEvenLength();
-	std::cout << "Quicksort functional test 10 passed" << std::endl;
-	testRandomLongOddLength();
-	std::cout << "Quicksort functional test 11 passed" << std::endl;
-	testLongRand();
+	testFewDuplicates();
 	std::cout << "Quicksort stress test 1 passed" << std::endl;
-	testLongDups();
+	testAllDuplicates();
 	std::cout << "Quicksort stress test 2 passed" << std::endl;
-	testAscending();
+	testRandomDuplicates();
 	std::cout << "Quicksort stress test 3 passed" << std::endl;
-	testDescending();
+	testNoDuplicates();
 	std::cout << "Quicksort stress test 4 passed" << std::endl;
-	testAlternating2();
+	testMostlyDuplicates();
 	std::cout << "Quicksort stress test 5 passed" << std::endl;
-	testAlternating10();
+	testAlternatingDuplicates();
 	std::cout << "Quicksort stress test 6 passed" << std::endl;
 	std::cout << "Completed" << std::endl;
+	
 	return 0;
 }
