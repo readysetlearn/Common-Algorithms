@@ -183,8 +183,8 @@ void sort3(Iter begin, Iter end)
 	assert(*begin <= *mid && *mid <= *end);
 }
 
-// Functional test cases
 // Quicksort tests
+// Functional test cases
 // Test case 1: empty vector
 void testEmptyRange()
 {
@@ -266,49 +266,7 @@ void testRandomListSort()
 	assert((randomList == std::list<int>{10, 20, 30, 40, 50}));
 }
 
-// medianOf3 tests
-// Test case 1: Three distinct elements
-void test3Distinct() {
-	std::vector<int> nums = {5, 2, 8};
-	auto result = medianOf3(nums.begin(), std::prev(nums.end()));
-	assert(*result == 5);
-}
-
-// Test case 2: Three equal elements
-void test3Equal() {
-	std::vector<int> nums = {4, 4, 4};
-	auto result = medianOf3(nums.begin(), std::prev(nums.end()));
-	assert(*result == 4);
-}
-
-// Test case 3: Ascending elements
-void test3Ascending() {
-	std::vector<int> nums = {1, 2, 3};
-	auto result = medianOf3(nums.begin(), std::prev(nums.end()));
-	assert(*result == 2);
-}
-
-// Test case 4: Descending elements
-void test3Descending() {
-	std::vector<int> nums = {6, 5, 4};
-	auto result = medianOf3(nums.begin(), std::prev(nums.end()));
-	assert(*result == 5);
-}
-
-// Test case 5: Six chars
-void test6Chars() {
-	std::vector<int> chars = {'x', 'y', 'z', 'a', 'b', 'c'};
-	auto result = medianOf3(chars.begin(), std::prev(chars.end()));
-	assert(*result == 'x');
-}
-
-// Test case 6: Descending negative elements
-void test3DescNeg() {
-	std::vector<int> nums = {-1, -2, -3};
-	auto result = medianOf3(nums.begin(), std::prev(nums.end()));
-	assert(*result == -2);
-}
-
+// Quicksort tests
 // Stress Test Cases
 // Test 1: large vector with random longs
 void testLongRand()
@@ -403,10 +361,67 @@ void testAlternating10()
 }
 
 
+// medianOf3 functional test cases
+// Test case 1: Three distinct elements
+void test3Distinct() {
+	std::vector<int> nums = {5, 2, 8};
+	auto result = medianOf3(nums.begin(), std::prev(nums.end()));
+	assert(*result == 5);
+}
+
+// Test case 2: Three equal elements
+void test3Equal() {
+	std::vector<int> nums = {4, 4, 4};
+	auto result = medianOf3(nums.begin(), std::prev(nums.end()));
+	assert(*result == 4);
+}
+
+// Test case 3: Ascending elements
+void test3Ascending() {
+	std::vector<int> nums = {1, 2, 3};
+	auto result = medianOf3(nums.begin(), std::prev(nums.end()));
+	assert(*result == 2);
+}
+
+// Test case 4: Descending elements
+void test3Descending() {
+	std::vector<int> nums = {6, 5, 4};
+	auto result = medianOf3(nums.begin(), std::prev(nums.end()));
+	assert(*result == 5);
+}
+
+// Test case 5: Six chars
+void test6Chars() {
+	std::vector<int> chars = {'x', 'y', 'z', 'a', 'b', 'c'};
+	auto result = medianOf3(chars.begin(), std::prev(chars.end()));
+	assert(*result == 'x');
+}
+
+// Test case 6: Descending negative elements
+void test3DescNeg() {
+	std::vector<int> nums = {-1, -2, -3};
+	auto result = medianOf3(nums.begin(), std::prev(nums.end()));
+	assert(*result == -2);
+}
+
 int main()
 {
 	std::cout << "Started" << std::endl;
+	// Test pivot selection
+	test3Distinct();
+	std::cout << "Pivot selection test 1 passed" << std::endl;
+	test3Equal();
+	std::cout << "Pivot selection test 2 passed" << std::endl;
+	test3Ascending();
+	std::cout << "Pivot selection test 3 passed" << std::endl;
+	test3Descending();
+	std::cout << "Pivot selection test 4 passed" << std::endl;
+	test6Chars();
+	std::cout << "Pivot selection test 5 passed" << std::endl;
+	test3DescNeg();
+	std::cout << "Pivot selection test 6 passed" << std::endl;
 	testEmptyRange();
+	// Test correctness of QuickSort implementation
 	std::cout << "Quicksort functional test 1 passed" << std::endl;
 	testSingleElementRange();
 	std::cout << "Quicksort functional test 2 passed" << std::endl;
@@ -420,12 +435,13 @@ int main()
 	std::cout << "Quicksort functional test 6 passed" << std::endl;
 	testDuplicateElements();
 	std::cout << "Quicksort functional test 7 passed" << std::endl;
-	void allDupsOdd();
+	allDupsOdd();
 	std::cout << "Quicksort functional  test 8 passed" << std::endl;
-	void allDupsEven();
+	allDupsEven();
 	std::cout << "Quicksort functional test 9 passed" << std::endl;
 	testRandomListSort();
 	std::cout << "Quicksort functional  test 10 passed" << std::endl;
+	// Test speed of QuickSort implementation
 	testLongRand();
 	std::cout << "Quicksort stress test 1 passed" << std::endl;
 	testLongDups();
@@ -438,6 +454,8 @@ int main()
 	std::cout << "Quicksort stress test 5 passed" << std::endl;
 	testAlternating10();
 	std::cout << "Quicksort stress test 6 passed" << std::endl;
+
+	
 	std::cout << "Completed" << std::endl;
 	
 	return 0;
