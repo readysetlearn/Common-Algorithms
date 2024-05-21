@@ -248,7 +248,7 @@ void testRandomLongEvenLength()
 {
 	std::vector<float> vec = {5.6f, 1.1f, 12.3f, 7.8f, 4.5f, 9.0f, 2.3f, 11.2f, 3.4f, 6.7f, 0.2f, 10.1f, 8.9f};  // Even length vector of duplicates
 	quickSort(vec);
-	assert((vec == std::vector<float>{0.5f, 1.2f, 2.0f, 2.3f, 3.6f, 3.9f, 4.2f, 5.6f, 6.1f, 7.4f, 8.9f, 9.8f}));
+	assert((vec == std::vector<float>{0.2f, 1.1f, 2.3f, 3.4f, 4.5f, 5.6f, 6.7f, 7.8f, 8.9f, 9.0f, 10.1f, 11.2f, 12.3}));
 }
 
 // Test case 11: vector with 13 random elements
@@ -256,7 +256,7 @@ void testRandomLongOddLength()
 {
 	std::vector<float> vec = {5.6f, 1.1f, 12.3f, 7.8f, 4.5f, 9.0f, 2.3f, 11.2f, 3.4f, 6.7f, 0.2f, 10.1f, 8.9f};  // Even length vector of duplicates
 	quickSort(vec);
-assert((vec == std::vector<float>{0.2f, 1.1f, 2.3f, 3.4f, 4.5f, 5.6f, 6.7f, 7.8f, 8.9f, 9.0f, 10.1f, 11.2f, 12.3f}));
+	assert((vec == std::vector<float>{0.2f, 1.1f, 2.3f, 3.4f, 4.5f, 5.6f, 6.7f, 7.8f, 8.9f, 9.0f, 10.1f, 11.2f, 12.3f}));
 }
 
 
@@ -264,7 +264,7 @@ assert((vec == std::vector<float>{0.2f, 1.1f, 2.3f, 3.4f, 4.5f, 5.6f, 6.7f, 7.8f
 // Test 1: vector with few duplicates
 void testFewDuplicates() {
     std::vector<int> vec;
-    const int n = 100000;
+    const int n = 1000000;
 	vec.reserve(n);
     for (int i = 0; i < n; ++i) {
         vec.push_back(i % (n / 2)); // Half the range will have duplicates
@@ -276,7 +276,7 @@ void testFewDuplicates() {
 // Test 2: vector with all duplicates
 void testAllDuplicates() {
     std::vector<int> vec;
-    const int n = 100000;
+    const int n = 1000000;
 	vec.reserve(n);
     int val = 25; // Value to be repeated
     for (int i = 0; i < n; ++i) {
@@ -289,7 +289,7 @@ void testAllDuplicates() {
 // Test 3: vector with random duplicates
 void testRandomDuplicates() {
     std::vector<int> vec;
-    const int n = 100000;
+    const int n = 1000000;
 	vec.reserve(n);
     for (int i = 0; i < n; ++i) {
         vec.push_back(i % 10); // 10 different values with some repetitions
@@ -301,7 +301,7 @@ void testRandomDuplicates() {
 // Test 4: vector with no duplicates
 void testNoDuplicates() {
     std::vector<int> vec;
-    const int n = 100000;
+    const int n = 1000000;
 	vec.reserve(n);
     for (int i = 0; i < n; ++i) {
         vec.push_back(i); // All elements are unique
@@ -313,7 +313,7 @@ void testNoDuplicates() {
 // Test 5: vector with mostly duplicates
 void testMostlyDuplicates() {
     std::vector<int> vec;
-    const int n = 100000;
+    const int n = 1000000;
 	vec.reserve(n);
     for (int i = 0; i < n; ++i) {
         if (i < n / 2) {
@@ -329,7 +329,7 @@ void testMostlyDuplicates() {
 // Test 6: vector with alternating duplicates
 void testAlternatingDuplicates() {
     std::vector<int> vec;
-    const int n = 100000;
+    const int n = 1000000;
 	vec.reserve(n);
     for (int i = 0; i < n; ++i) {
         vec.push_back(i % 2); // Alternating duplicates
@@ -342,7 +342,29 @@ void testAlternatingDuplicates() {
 int main()
 {
 	std::cout << "Started" << std::endl;
+	testEmptyRange();
+	std::cout << "Quicksort functional test 1 passed" << std::endl;
 	testFewDuplicates();
+	std::cout << "Quicksort functional test 2 passed" << std::endl;
+	testSingleElementRange();
+	std::cout << "Quicksort functional test 3 passed" << std::endl;
+	testSortedRange();
+	std::cout << "Quicksort functional test 4 passed" << std::endl;
+	testReverseSortedRange();
+	std::cout << "Quicksort functional test 5 passed" << std::endl;
+	testRandomdRangeInt();
+	std::cout << "Quicksort functional test 6 passed" << std::endl;
+	testRandomRangeChar();
+	std::cout << "Quicksort functional test 7 passed" << std::endl;
+	testDuplicateElements();
+	std::cout << "Quicksort functional test 8 passed" << std::endl;
+	allDupsOdd();
+	std::cout << "Quicksort functional test 9 passed" << std::endl;
+	allDupsEven();
+	std::cout << "Quicksort functional test 10 passed" << std::endl;
+	testRandomLongEvenLength();
+	std::cout << "Quicksort functional test 11 passed" << std::endl;
+	testRandomLongOddLength();
 	std::cout << "Quicksort stress test 1 passed" << std::endl;
 	testAllDuplicates();
 	std::cout << "Quicksort stress test 2 passed" << std::endl;
